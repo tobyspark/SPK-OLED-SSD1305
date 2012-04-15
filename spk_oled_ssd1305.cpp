@@ -1,13 +1,17 @@
 // *spark audio-visual
 // OLED display using SSD1305 driver
 // Copyright *spark audio-visual 2012
-
+ 
 #include "spk_oled_ssd1305.h"
 #include "mbed.h"
 
 SPKDisplay::SPKDisplay(PinName mosiPin, PinName clkPin, PinName csPin, PinName dcPin, PinName resPin, Serial *debugSerial)
 {
     bufferHasChanged = false;
+    
+    fontStartCharacter = NULL;
+    fontEndCharacter = NULL;
+    fontCharacters = NULL;
     
     spi = new SPI(mosiPin, NC, clkPin);
     spi->format(8,3);
@@ -34,7 +38,7 @@ void SPKDisplay::clearBuffer()
     bufferHasChanged = true;
 }
 
-void SPKDisplay::imageToBuffer()
+void SPKDisplay::imageToBuffer(const uint8_t* image)
 {
     memcpy(buffer, image, bufferCount);
     bufferHasChanged = true;
@@ -84,6 +88,10 @@ void SPKDisplay::horizLineToBuffer(int y)
 
 void SPKDisplay::textToBuffer(std::string message, int row)
 {
+    // Font check
+    if (NULL == fontCharacters) return;
+    if (NULL == fontStartCharacter || NULL == fontEndCharacter) return;    
+
     // Range check
     if (row >= 8) row = 7;
     int bStart = row*bufferWidth;
@@ -95,7 +103,7 @@ void SPKDisplay::textToBuffer(std::string message, int row)
         char character = message.at(i);
         
         // Is it outside the range we have glyphs for?
-        if ((character < characterBytesStartChar) || (character > characterBytesEndChar))
+        if ((character < *fontStartCharacter) || (character > *fontEndCharacter))
         {
             // Treat as a space
             for (int j = 0; j < 5; j++)
@@ -114,13 +122,13 @@ void SPKDisplay::textToBuffer(std::string message, int row)
         else 
         {
             // Shift into our array's indexing
-            character -= characterBytesStartChar;
+            character -= *fontStartCharacter;
             
             // Write each byte's vertical column of 8bits into the buffer.
-            for (int j = 0; j < characterBytes[character][0]; j++)
+            for (int j = 0; j < fontCharacters[character][0]; j++)
             {
                 if (bPos >= bEnd) break;
-                buffer[bPos++] = characterBytes[character][j+1];
+                buffer[bPos++] = fontCharacters[character][j+1];
             }
             
             // Put 1px letter spacing at end

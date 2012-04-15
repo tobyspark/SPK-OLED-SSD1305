@@ -18,17 +18,18 @@
 #define pixInPage 8
 #define pageCount 8
 
-/** Display class for 128x64 OLEDs using the SSD1305 driver
+/** Display class for 128x64 OLEDs using the SSD1305 driver, connected via SPI
+  *
   * Display ie. DENSITRON - DD-12864YO-3A
   *
   * This is a ground-up, minimal library. Further functionality as and when its needed or anybody wants to contribute.
   * 
   * This library includes two processing sketches to create a font and full-screen image in the required byte representations.
-  * Without creating your a font and image, all this library will do is blank the screen and draw horizontal lines. But at least you'll know its working!
+  * Without creating your font and any images, all this library will do is blank the screen and draw horizontal lines. But at least you'll know its working!
   * 
   * Terminology:
   * 'rows' are 8 pixel high rows across the display, 0 being the topmost and 7 the bottom.
-  * 'lines' are single pixel lines, origin top left 
+  * 'lines' are single pixel lines, origin top left. 
   *
   * Example:
   * @code

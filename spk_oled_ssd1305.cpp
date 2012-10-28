@@ -157,6 +157,44 @@ void SPKDisplay::textToBuffer(std::string message, int row)
     bufferHasChanged = true;
 }
 
+void SPKDisplay::characterToBuffer(char character, int x, int row)
+{
+        // Font check
+    if (NULL == fontCharacters) return;
+    if (NULL == fontStartCharacter || NULL == fontEndCharacter) return;    
+
+    // Range check
+    if (row >= 8) row = 7;
+    int bStart = row*bufferWidth;
+    int bEnd = bStart + pixelWidth;
+
+    int bPos = bStart + x;
+        
+    // Is it outside the range we have glyphs for?
+    if ((character < *fontStartCharacter) || (character > *fontEndCharacter))
+    {
+        if (debug)
+        {
+            if (character != ' ') debug->printf("No glyph for character %c", character);
+        }
+    }
+    // If not, typeset it!
+    else 
+    {
+        // Shift into our array's indexing
+        character -= *fontStartCharacter;
+        
+        // Write each byte's vertical column of 8bits into the buffer.
+        for (int j = 0; j < fontCharacters[character][0]; j++)
+        {
+            if (bPos >= bEnd) break;
+            buffer[bPos++] = fontCharacters[character][j+1];
+        }
+    }
+
+    bufferHasChanged = true;
+}
+
 void SPKDisplay::sendBuffer()
 {
     if (bufferHasChanged)

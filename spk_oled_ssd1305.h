@@ -115,6 +115,15 @@ class SPKDisplay
      */ 
     void textToBuffer(std::string message, int row);
     
+    /** Write a single character in the object's display representation
+     * Requires the font to have been set
+     * 
+     * @param character The character to write.
+     * @param x         The x position to draw the character
+     * @param row       The row in which to write the character
+     */ 
+    void characterToBuffer(char character, int x, int row);
+    
     /** Send the object's display representation to the OLED
      * 
      * You can safely call this once per main loop, it will only transmit the buffer contents if there has been an update

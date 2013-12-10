@@ -81,7 +81,7 @@ void keyPressed()
     {
       int x = (charID-startID)*8 + counter;
 
-      byte theByte = 0;
+      char theByte = 0; // byte and other types are signed in java! char is the exception
       for (int b = 0; b < 8; b++)
       {
         if (imgPixel.get(x, b) == white)
